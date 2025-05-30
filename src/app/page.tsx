@@ -1,102 +1,167 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from "react";
+
+function IconLand() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <svg
+      className="w-8 h-8 text-yellow-500 mb-2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 12l2-2 4 4 8-8 4 4v6H3z" />
+    </svg>
+  );
+}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+function IconProject() {
+  return (
+    <svg
+      className="w-8 h-8 text-yellow-500 mb-2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function IconMarketplace() {
+  return (
+    <svg
+      className="w-8 h-8 text-yellow-500 mb-2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 6h16M4 10h16M4 14h10M4 18h16" />
+    </svg>
+  );
+}
+
+function IconInvestment() {
+  return (
+    <svg
+      className="w-8 h-8 text-yellow-500 mb-2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 8v8M8 12h8" />
+      <circle cx="12" cy="12" r="10" />
+    </svg>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header fixo */}
+      <header className="fixed top-0 left-0 right-0 bg-white shadow-md h-14 flex items-center justify-between px-6 z-50">
+        <h1 className="text-xl font-bold text-gray-800">Voltxz Dashboard</h1>
+        <nav className="space-x-4">
+          <button className="text-gray-700 hover:text-yellow-500 font-semibold transition">
+            Sign In
+          </button>
+          <button className="bg-yellow-400 text-white px-4 py-1 rounded-md font-semibold hover:bg-yellow-500 transition">
+            Sign Up
+          </button>
+        </nav>
+      </header>
+
+      {/* Espaço para o header fixo */}
+      <div className="h-14" />
+
+      {/* Conteúdo principal centralizado e responsivo */}
+      <main className="flex-grow container mx-auto px-6 py-8 max-w-6xl">
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+            Welcome to your Dashboard
+          </h2>
+
+          {/* Cards com conteúdo visual */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-6 flex flex-col items-center text-center">
+              <IconLand />
+              <h3 className="font-semibold text-yellow-700 mb-2">My Lands</h3>
+              <p className="text-yellow-900 mb-4">
+                List and manage your lands here.
+              </p>
+              <div className="w-full bg-yellow-200 rounded-full h-2">
+                <div
+                  className="bg-yellow-500 h-2 rounded-full"
+                  style={{ width: "75%" }}
+                ></div>
+              </div>
+              <small className="text-yellow-700 mt-1">75% used</small>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-6 flex flex-col items-center text-center">
+              <IconProject />
+              <h3 className="font-semibold text-yellow-700 mb-2">My Projects</h3>
+              <p className="text-yellow-900 mb-4">
+                Create and track your projects.
+              </p>
+              <div className="w-full bg-yellow-200 rounded-full h-2">
+                <div
+                  className="bg-yellow-500 h-2 rounded-full"
+                  style={{ width: "40%" }}
+                ></div>
+              </div>
+              <small className="text-yellow-700 mt-1">40% progress</small>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-6 flex flex-col items-center text-center">
+              <IconMarketplace />
+              <h3 className="font-semibold text-yellow-700 mb-2">Marketplace</h3>
+              <p className="text-yellow-900 mb-4">
+                Explore lands and projects marketplace.
+              </p>
+              <div className="w-full bg-yellow-200 rounded-full h-2">
+                <div
+                  className="bg-yellow-500 h-2 rounded-full"
+                  style={{ width: "60%" }}
+                ></div>
+              </div>
+              <small className="text-yellow-700 mt-1">60% active listings</small>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-6 flex flex-col items-center text-center">
+              <IconInvestment />
+              <h3 className="font-semibold text-yellow-700 mb-2">Investments</h3>
+              <p className="text-yellow-900 mb-4">
+                Manage your investments and offers.
+              </p>
+              <div className="w-full bg-yellow-200 rounded-full h-2">
+                <div
+                  className="bg-yellow-500 h-2 rounded-full"
+                  style={{ width: "90%" }}
+                ></div>
+              </div>
+              <small className="text-yellow-700 mt-1">90% return</small>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Rodapé fixo */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-gray-900 text-gray-300 text-center py-2 text-sm">
+        &copy; 2025 Voltxz - Plataforma de Energia Solar
       </footer>
     </div>
   );
