@@ -70,3 +70,6 @@ Thumbs.db
 *.ntvs*
 *.njsproj
 *.sln
+# Ignore banco SQLite
+*.sqlite
+*.db
