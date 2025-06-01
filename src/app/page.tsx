@@ -11,9 +11,9 @@ export default function HomePage() {
         Bem-vindo à <span className="text-yellow-900">VoltzX</span>
       </h1>
 
-      <p className="max-w-xl text-yellow-800 mb-10 text-lg sm:text-xl">
-        Conectando proprietários de terrenos, empresas de energia solar e investidores
-        para criar um futuro sustentável e próspero para todos.
+      <p className="max-w-xl text-yellow-800 mb-10 text-lg sm:text-xl"> 
+        algo aqui 
+
       </p>
 
       <button

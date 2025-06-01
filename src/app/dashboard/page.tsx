@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 
-// Íconesssss
+// aq os icones
 function IconLand() {
   return (
     <>
@@ -86,7 +86,6 @@ function IconInvestment() {
   );
 }
 
-// Card Component
 function DashboardCard({
   icon,
   title,
@@ -116,33 +115,37 @@ function DashboardCard({
   );
 }
 
-// Página principal do dash so para se localizar...
+// aqui é a parte do dash
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header fixo */}
-      <header className="fixed top-0 left-0 right-0 bg-white shadow-md h-14 flex items-center justify-between px-6 z-50">
-        <h1 className="text-xl font-bold text-gray-800">Voltxz Dashboard</h1>
-        <nav className="space-x-4 flex items-center">
-          <Link
-            href="/signing"
-            className="text-gray-700 hover:text-yellow-500 font-semibold transition"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/signup"
-            className="bg-yellow-400 text-white px-4 py-1 rounded-md font-semibold hover:bg-yellow-500 transition"
-          >
-            Sign Up
-          </Link>
-        </nav>
-      </header>
+    <div className="min-h-screen flex flex-col bg-gray-200">
+      {/* Header fixo estilizado com faixas */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <div className="bg-yellow-400 h-4 w-full" />
+        <div className="bg-black h-1 w-full" />
+        <header className="bg-white h-14 flex items-center justify-between px-6 shadow-md">
+          <h1 className="text-xl font-bold text-gray-800">Voltxz Dashboard</h1>
+          <nav className="space-x-4 flex items-center">
+            <Link
+              href="/sigin"
+              className="text-gray-700 hover:text-yellow-500 font-semibold transition"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/signup"
+              className="bg-yellow-400 text-white px-4 py-1 rounded-md font-semibold hover:bg-yellow-500 transition"
+            >
+              Sign Up
+            </Link>
+          </nav>
+        </header>
+      </div>
 
-      {/* Espaço para o header glr */}
-      <div className="h-14" />
+      {/* Espaço para o header e faixas */}
+      <div className="h-[69px]" />
 
-      {/* Conteúdo principal aqui */}
+      {/* Conteúdo principal */}
       <main className="flex-grow container mx-auto px-6 py-8 max-w-6xl">
         <div className="bg-white rounded-xl shadow-lg p-8">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">
@@ -182,8 +185,8 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Rodapé fixo */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-gray-900 text-gray-300 text-center py-2 text-sm">
+      {/* Rodapé fixo com faixa preta */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-black text-gray-300 text-center py-2 text-sm">
         &copy; 2025 Voltxz - Plataforma de Energia Solar
       </footer>
     </div>
