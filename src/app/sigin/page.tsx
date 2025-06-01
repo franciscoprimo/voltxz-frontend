@@ -36,7 +36,7 @@ export default function SigninPage() {
       } else {
         setError(result.message || 'Credenciais inválidas')
       }
-    } catch (err) {
+    } catch {
       setError('Ocorreu um erro durante o login')
     } finally {
       setLoading(false)

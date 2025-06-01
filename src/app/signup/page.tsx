@@ -30,11 +30,11 @@ export default function SignupPage() {
       const result = registerUser({ name, email, password, role })
 
       if (result.success) {
-        router.push('/signin') // Corrigido de '/sigin' para '/signin'
+        router.push('/sigin')
       } else {
         setError(result.message)
       }
-    } catch (err) {
+    } catch {
       setError('Ocorreu um erro durante o cadastro')
     } finally {
       setLoading(false)
@@ -77,7 +77,7 @@ export default function SignupPage() {
                   type="radio"
                   value={r}
                   checked={role === r}
-                  onChange={() => setRole(r as any)}
+                  onChange={() => setRole(r as 'owner' | 'company' | 'investor' | 'monitor')}
                   className="text-yellow-500 focus:ring-yellow-500"
                 />
                 <span className="text-gray-700">
