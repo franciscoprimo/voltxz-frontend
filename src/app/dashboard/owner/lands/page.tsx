@@ -16,6 +16,10 @@ export default function OwnerLandsPage() {
   const [lands, setLands] = useState<Land[]>([]);
 
   useEffect(() => {
+    document.title = "VoltzX | My Lands";
+  }, []);
+
+  useEffect(() => {
     // axios 
     const mockLands: Land[] = [
       {

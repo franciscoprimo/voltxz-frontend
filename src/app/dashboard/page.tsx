@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 
 // aq os icones
@@ -117,6 +117,10 @@ function DashboardCard({
 
 // aqui é a parte do dash
 export default function DashboardPage() {
+  useEffect(() => { //Define o nome da aba do navegador
+    document.title = "VoltzX | Dashboard";
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-200">
       {/* Header fixo estilizado com faixas */}
@@ -124,7 +128,7 @@ export default function DashboardPage() {
         <div className="bg-yellow-400 h-4 w-full" />
         <div className="bg-black h-1 w-full" />
         <header className="bg-white h-14 flex items-center justify-between px-6 shadow-md">
-          <h1 className="text-xl font-bold text-gray-800">Voltxz Dashboard</h1>
+          <h1 className="text-xl font-bold text-gray-800">VoltzX Dashboard</h1>
           <nav className="space-x-4 flex items-center">
             <Link
               href="/sigin"
@@ -187,7 +191,7 @@ export default function DashboardPage() {
 
       {/* Rodapé fixo com faixa preta */}
       <footer className="fixed bottom-0 left-0 right-0 bg-black text-gray-300 text-center py-2 text-sm">
-        &copy; 2025 Voltxz - Plataforma de Energia Solar
+        &copy; 2025 VoltzX - Plataforma de Energia Solar
       </footer>
     </div>
   );

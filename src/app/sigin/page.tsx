@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react' 
 import { useRouter } from 'next/navigation'
 import { loginUser } from '@/lib/auth'
 import { Input } from '@/components/ui/input'
@@ -11,6 +11,11 @@ export default function SigninPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
+
+  //Define o nome da aba do navegador
+  useEffect(() => {
+    document.title = "VoltzX | Sign In" 
+  }, [])
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()

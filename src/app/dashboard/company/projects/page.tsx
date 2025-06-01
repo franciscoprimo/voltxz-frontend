@@ -16,6 +16,10 @@ export default function CompanyProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
+    document.title = "VoltzX | Projects";
+  }, []);
+
+  useEffect(() => {
     const mockProjects: Project[] = [
       {
         id: "1",

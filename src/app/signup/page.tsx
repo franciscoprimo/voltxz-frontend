@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { registerUser } from '@/lib/auth'
 import { Input } from '@/components/ui/input'
@@ -13,6 +13,11 @@ export default function SignupPage() {
   const [role, setRole] = useState<'owner' | 'company' | 'investor' | 'monitor'>('owner')
   const [error, setError] = useState('')
   const router = useRouter()
+
+  //Define o nome da aba do navegador
+  useEffect(() => {
+    document.title = "Voltxz | Sign Up"
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

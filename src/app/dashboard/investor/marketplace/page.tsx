@@ -10,6 +10,10 @@ export default function InvestorMarketplacePage() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    document.title = "VoltzX | Marketplace";
+  }, []);
+
+  useEffect(() => {
     const storedProjects = getProjects();
     setProjects(storedProjects);
   }, []);
