@@ -22,6 +22,7 @@ export function RadioGroup({ className, onValueChange, ...props }: RadioGroupPro
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface RadioGroupItemProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 export function RadioGroupItem({ className, ...props }: RadioGroupItemProps) {
