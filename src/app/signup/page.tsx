@@ -1,49 +1,48 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { registerUser } from '@/lib/auth'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { registerUser } from '@/lib/auth';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function SignupPage() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState<'owner' | 'company' | 'investor' | 'monitor'>('owner')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'owner' | 'company' | 'investor' | 'monitor'>('owner');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // Define o nome da aba do navegador
   useEffect(() => {
-    document.title = "VoltzX | Sign Up"
-  }, [])
+    document.title = 'VoltzX | Criar Conta';
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
     try {
-      const result = registerUser({ name, email, password, role })
+      const result = await registerUser({ name, email, password, role });
 
       if (result.success) {
-        router.push('/sigin')
+        router.push('/signin');
       } else {
-        setError(result.message)
+        setError(result.message || 'Erro ao registrar');
       }
     } catch {
-      setError('Ocorreu um erro durante o cadastro')
+      setError('Ocorreu um erro durante o cadastro');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-200">
-      <div className="max-w-md w-full p-6 bg-white rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-md">
         <h2 className="text-2xl font-bold text-yellow-700 mb-6 text-center">Criar Conta</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
@@ -77,13 +76,11 @@ export default function SignupPage() {
                   type="radio"
                   value={r}
                   checked={role === r}
-                  onChange={() => setRole(r as 'owner' | 'company' | 'investor' | 'monitor')}
+                  onChange={() => setRole(r as any)}
                   className="text-yellow-500 focus:ring-yellow-500"
                 />
                 <span className="text-gray-700">
-                  {r === 'owner' ? 'Proprietário' : 
-                   r === 'company' ? 'Empresa' : 
-                   r === 'investor' ? 'Investidor' : 'Monitor'}
+                  {r === 'owner' ? 'Proprietário' : r === 'company' ? 'Empresa' : r === 'investor' ? 'Investidor' : 'Monitor'}
                 </span>
               </label>
             ))}
@@ -91,8 +88,8 @@ export default function SignupPage() {
 
           {error && <p className="text-red-500 text-center">{error}</p>}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
             disabled={loading}
           >
@@ -110,5 +107,5 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

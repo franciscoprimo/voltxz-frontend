@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Input } from "./input";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
 import { Button } from "./button";
 import { Label } from "./label";
-import { RadioGroup, RadioGroupItem } from "./radio-group";
+
+const API_BASE_URL = "http://localhost:3000/api"; //porta do back
 
 export function SignupForm() {
   const router = useRouter();
@@ -13,39 +15,64 @@ export function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSignup = () => {
-    if (!name || !email || !password || !confirmPassword || !role) {
-      alert("Por favor, preencha todos os campos.");
+  const handleSignup = async () => {
+    if (!name || !email || !password || !confirmPassword) {
+      setError("Por favor, preencha todos os campos.");
       return;
     }
+
     if (password !== confirmPassword) {
-      alert("As senhas não coincidem.");
+      setError("As senhas não coincidem.");
       return;
     }
 
-    // Aqui você pode adicionar a lógica para cadastro, ex: chamada API
+    setLoading(true);
+    setError(null);
 
-    localStorage.setItem("user", JSON.stringify({ name, email, role }));
-    router.push("/dashboard");
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.message || "Erro ao criar conta.");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/login");
+    } catch (err) {
+      setError("Erro desconhecido.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 bg-white p-6 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-yellow-600 text-center">Cadastrar na VoltzX</h2>
+    <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-md">
+      <h2 className="text-3xl font-bold mb-6 text-yellow-600 text-center">
+        Crie sua conta na VoltzX
+      </h2>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <Label htmlFor="name">Nome Completo</Label>
         <Input
           id="name"
+          type="text"
           placeholder="Seu nome completo"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
       </div>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -53,52 +80,57 @@ export function SignupForm() {
           placeholder="seuemail@exemplo.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
       </div>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <Label htmlFor="password">Senha</Label>
         <Input
           id="password"
           type="password"
-          placeholder="Senha"
+          placeholder="********"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-
-      <div className="mb-4">
-        <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          placeholder="Confirmar senha"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
         />
       </div>
 
       <div className="mb-6">
-        <Label>Tipo de Usuário</Label>
-        <RadioGroup onValueChange={setRole} className="mt-2">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="owner" id="owner" />
-            <Label htmlFor="owner">Proprietário</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="company" id="company" />
-            <Label htmlFor="company">Empresa</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="investor" id="investor" />
-            <Label htmlFor="investor">Investidor</Label>
-          </div>
-        </RadioGroup>
+        <Label htmlFor="confirmPassword">Confirme a Senha</Label>
+        <Input
+          id="confirmPassword"
+          type="password"
+          placeholder="********"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
       </div>
 
-      <Button className="w-full bg-yellow-500 hover:bg-yellow-600" onClick={handleSignup}>
-        Cadastrar
+      {error && (
+        <p className="text-red-500 text-center mb-4" role="alert">
+          {error}
+        </p>
+      )}
+
+      <Button
+        className="w-full bg-yellow-500 hover:bg-yellow-600"
+        onClick={handleSignup}
+        disabled={loading}
+      >
+        {loading ? "Criando conta..." : "Cadastrar"}
       </Button>
+
+      <p className="mt-6 text-center text-gray-600">
+        Já tem conta?{" "}
+        <Link
+          href="/login"
+          className="text-yellow-600 font-semibold hover:underline"
+        >
+          Entrar
+        </Link>
+      </p>
     </div>
   );
 }

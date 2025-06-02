@@ -7,24 +7,79 @@ import { Input } from "@/components/ui/input";
 import { Button } from "./button";
 import { Label } from "./label";
 
+const API_BASE_URL = "http://localhost:3000/api"; //porta do back
+
+interface User {
+  email: string;
+  role: "owner" | "company" | "investor" | "monitor";
+}
+
 export function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
-      alert("Por favor, preencha todos os campos.");
+      setError("Por favor, preencha todos os campos.");
       return;
     }
-    // podemos integrar  avalidação real com backend
-    localStorage.setItem("user", JSON.stringify({ email }));
-    router.push("/dashboard");
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.message || "Erro ao fazer login.");
+        setLoading(false);
+        return;
+      }
+
+      const { token, user } = (await response.json()) as {
+        token: string;
+        user: User;
+      };
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      switch (user.role) {
+        case "owner":
+          router.push("/dashboard/owner/lands");
+          break;
+        case "company":
+          router.push("/dashboard/company/projects");
+          break;
+        case "investor":
+          router.push("/dashboard/investor/marketplace");
+          break;
+        case "monitor":
+          router.push("/dashboard/monitor");
+          break;
+        default:
+          router.push("/");
+      }
+    } catch (err) {
+      setError("Erro ao fazer login.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-xl shadow-md">
-      <h2 className="text-3xl font-bold mb-6 text-yellow-600 text-center">Entrar na VoltzX</h2>
+      <h2 className="text-3xl font-bold mb-6 text-yellow-600 text-center">
+        Entrar na VoltzX
+      </h2>
 
       <div className="mb-5">
         <Label htmlFor="email">Email</Label>
@@ -50,13 +105,26 @@ export function LoginForm() {
         />
       </div>
 
-      <Button className="w-full bg-yellow-500 hover:bg-yellow-600" onClick={handleLogin}>
-        Entrar
+      {error && (
+        <p className="text-red-500 text-center mb-4" role="alert">
+          {error}
+        </p>
+      )}
+
+      <Button
+        className="w-full bg-yellow-500 hover:bg-yellow-600"
+        onClick={handleLogin}
+        disabled={loading}
+      >
+        {loading ? "Carregando..." : "Entrar"}
       </Button>
 
       <p className="mt-6 text-center text-gray-600">
         Não tem conta?{" "}
-        <Link href="/signup" className="text-yellow-600 font-semibold hover:underline">
+        <Link
+          href="/signup"
+          className="text-yellow-600 font-semibold hover:underline"
+        >
           Inscreva-se
         </Link>
       </p>
