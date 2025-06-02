@@ -67,7 +67,7 @@ export function NewProjectForm({ onSubmit }: NewProjectFormProps) {
         <Input
           id="location"
           type="text"
-          placeholder="Ex: Juazeiro - BA"
+          placeholder="Ex: Fortaleza - CE"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
