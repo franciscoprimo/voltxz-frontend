@@ -43,49 +43,50 @@ export default function SigninPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="max-w-md w-full p-8">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-yellow-700 mb-2">VoltzX</h1>
-          <p className="text-gray-600">Acesse sua conta para continuar</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-yellow-200 via-yellow-100 to-yellow-50 px-4">
+      <div className="max-w-lg w-full p-10 bg-white rounded-3xl shadow-lg border border-yellow-300">
+        {/* Removi o SVG aqui */}
+        <h2 className="text-3xl font-extrabold text-yellow-700 text-center mb-8">Entrar</h2>
+
         <form onSubmit={handleLogin} className="space-y-6">
-          <div className="space-y-4">
-            <Input
-              id="email"
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
-            />
-            <Input
-              id="password"
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
-            />
-          </div>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-400 placeholder-yellow-400"
+          />
+          <Input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-400 placeholder-yellow-400"
+          />
+
+          {error && (
+            <p className="text-red-500 text-center font-medium">{error}</p>
+          )}
+
           <Button
             type="submit"
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold transition-shadow shadow-md hover:shadow-lg"
             disabled={loading}
           >
             {loading ? 'Carregando...' : 'Entrar'}
           </Button>
         </form>
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600">
-            Não tem uma conta?{' '}
-            <Link href="/signup" className="font-medium text-yellow-600 hover:text-yellow-500">
-              Criar conta
-            </Link>
-          </p>
+
+        <div className="mt-8 text-center text-gray-600 text-sm">
+          Não tem uma conta?{' '}
+          <Link
+            href="/signup"
+            className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors"
+          >
+            Criar conta
+          </Link>
         </div>
       </div>
     </div>

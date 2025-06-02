@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -29,7 +29,8 @@ export default function SignupPage() {
       const result = await registerUser({ name, email, password, role });
 
       if (result.success) {
-        router.push('/signin');
+        // Redirecionar para a página de completar cadastro com o role
+        router.push(`/complete-registration?role=${role}`);
       } else {
         setError(result.message || 'Erro ao registrar');
       }
@@ -41,16 +42,17 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full p-8 bg-white rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold text-yellow-700 mb-6 text-center">Criar Conta</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-yellow-200 via-yellow-100 to-yellow-50">
+      <div className="max-w-lg w-full p-10 bg-white rounded-3xl shadow-lg border border-yellow-300">
+        <h2 className="text-3xl font-extrabold text-yellow-700 text-center mb-8">Criar Conta</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <Input
-            placeholder="Nome"
+            placeholder="Nome Completo"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-400 placeholder-yellow-400"
           />
           <Input
             type="email"
@@ -58,7 +60,7 @@ export default function SignupPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-400 placeholder-yellow-400"
           />
           <Input
             type="password"
@@ -66,44 +68,51 @@ export default function SignupPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-400 placeholder-yellow-400"
           />
 
-          <div className="flex flex-wrap gap-3 justify-center">
+          <div className="flex justify-between mt-4">
             {['owner', 'company', 'investor', 'monitor'].map((r) => (
-              <label key={r} className="flex items-center space-x-2">
+              <label
+                key={r}
+                className="flex items-center space-x-2 cursor-pointer select-none text-yellow-700 hover:text-yellow-800 transition"
+              >
                 <input
                   type="radio"
                   value={r}
                   checked={role === r}
                   onChange={() => setRole(r as any)}
-                  className="text-yellow-500 focus:ring-yellow-500"
+                  className="accent-yellow-500 focus:ring-yellow-500"
                 />
-                <span className="text-gray-700">
-                  {r === 'owner' ? 'Proprietário' : r === 'company' ? 'Empresa' : r === 'investor' ? 'Investidor' : 'Monitor'}
+                <span className="capitalize">
+                  {r === 'owner'
+                    ? 'Proprietário'
+                    : r === 'company'
+                    ? 'Empresa'
+                    : r === 'investor'
+                    ? 'Investidor'
+                    : 'Monitor'}
                 </span>
               </label>
             ))}
           </div>
 
-          {error && <p className="text-red-500 text-center">{error}</p>}
+          {error && <p className="text-red-500 text-center font-medium">{error}</p>}
 
           <Button
             type="submit"
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold transition-shadow shadow-md hover:shadow-lg"
             disabled={loading}
           >
             {loading ? 'Registrando...' : 'Registrar'}
           </Button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Já tem uma conta?{' '}
-            <Link href="/signin" className="font-medium text-yellow-600 hover:text-yellow-500">
-              Entrar
-            </Link>
-          </p>
+        <div className="mt-8 text-center text-gray-600 text-sm">
+          Já tem uma conta?{' '}
+          <Link href="/signin" className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors">
+            Entrar
+          </Link>
         </div>
       </div>
     </div>
