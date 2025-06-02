@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { registerUser } from '@/lib/auth'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function SignupPage() {
   const [name, setName] = useState('')
@@ -12,89 +13,102 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<'owner' | 'company' | 'investor' | 'monitor'>('owner')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const result = registerUser({ name, email, password, role })
+  // Define o nome da aba do navegador
+  useEffect(() => {
+    document.title = "VoltzX | Sign Up"
+  }, [])
 
-    if (result.success) {
-      router.push('/sigin')
-    } else {
-      setError(result.message)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const result = registerUser({ name, email, password, role })
+
+      if (result.success) {
+        router.push('/sigin')
+      } else {
+        setError(result.message)
+      }
+    } catch {
+      setError('Ocorreu um erro durante o cadastro')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 border rounded-xl shadow bg-white">
-      <h2 className="text-xl font-bold mb-4">Criar Conta</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+    <div className="min-h-screen flex items-center justify-center bg-gray-200">
+      <div className="max-w-md w-full p-6 bg-white rounded-xl shadow-lg">
+        <h2 className="text-2xl font-bold text-yellow-700 mb-6 text-center">Criar Conta</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            placeholder="Nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
+          />
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
+          />
+          <Input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500"
+          />
 
-        <div className="space-x-4">
-          <label>
-            <input
-              type="radio"
-              value="owner"
-              checked={role === 'owner'}
-              onChange={() => setRole('owner')}
-            />
-            <span className="ml-1">Proprietário</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="company"
-              checked={role === 'company'}
-              onChange={() => setRole('company')}
-            />
-            <span className="ml-1">Empresa</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="investor"
-              checked={role === 'investor'}
-              onChange={() => setRole('investor')}
-            />
-            <span className="ml-1">Investidor</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="monitor"
-              checked={role === 'monitor'}
-              onChange={() => setRole('monitor')}
-            />
-            <span className="ml-1">Monitor</span>
-          </label>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {['owner', 'company', 'investor', 'monitor'].map((r) => (
+              <label key={r} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  value={r}
+                  checked={role === r}
+                  onChange={() => setRole(r as 'owner' | 'company' | 'investor' | 'monitor')}
+                  className="text-yellow-500 focus:ring-yellow-500"
+                />
+                <span className="text-gray-700">
+                  {r === 'owner' ? 'Proprietário' : 
+                   r === 'company' ? 'Empresa' : 
+                   r === 'investor' ? 'Investidor' : 'Monitor'}
+                </span>
+              </label>
+            ))}
+          </div>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}
+
+          <Button 
+            type="submit" 
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white"
+            disabled={loading}
+          >
+            {loading ? 'Registrando...' : 'Registrar'}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Já tem uma conta?{' '}
+            <Link href="/signin" className="font-medium text-yellow-600 hover:text-yellow-500">
+              Entrar
+            </Link>
+          </p>
         </div>
-
-        {error && <p className="text-red-500">{error}</p>}
-
-        <Button type="submit" className="w-full">
-          Registrar
-        </Button>
-      </form>
+      </div>
     </div>
   )
-}
+} 
