@@ -6,15 +6,6 @@ import { useEffect, useState } from 'react';
 import { landService, Land } from '@/services/landService';
 import { Button } from '@/components/ui/button';
 import { Input as ShadcnInput } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Search } from 'lucide-react';
 import {
   Dialog,
