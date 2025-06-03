@@ -6,7 +6,7 @@ export default function HomeRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/dashboard");
+    router.push("/signup"); // Redireciona para a página de cadastro
   }, [router]);
 
   return null;

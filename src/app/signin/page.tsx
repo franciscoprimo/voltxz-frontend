@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '@/lib/auth';
+import { performLogin } from '@/lib/auth'; // <-- Importa performLogin
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -24,19 +24,25 @@ export default function SigninPage() {
     setError('');
 
     try {
-      const result = await loginUser(email, password);
+      // Chama performLogin
+      const result = await performLogin(email, password);
 
       if (result.success && result.user) {
-        const role = result.user.role;
-        if (role === 'owner') router.push('/dashboard/owner/lands');
-        else if (role === 'company') router.push('/dashboard/company/projects');
-        else if (role === 'investor') router.push('/dashboard/investor/marketplace');
-        else if (role === 'monitor') router.push('/dashboard/monitor');
+        // Usa user_type (consistente com o backend e User type em lib/auth.ts)
+        const user_type = result.user.user_type; 
+        
+        // Redirecionamento baseado no user_type
+        if (user_type === 'land_owner') router.push('/dashboard/owner/lands'); // <-- Ajuste aqui
+        else if (user_type === 'company') router.push('/dashboard/company/projects'); // <-- Ajuste aqui
+        else if (user_type === 'investor') router.push('/dashboard/investor/marketplace'); // <-- Ajuste aqui
+        else if (user_type === 'monitor') router.push('/dashboard/monitor'); // <-- Ajuste aqui
+        else router.push('/dashboard'); // Redirecionamento padrão caso não caia em nenhum dos anteriores
       } else {
+        // result.message já virá do catch em performLogin
         setError(result.message || 'Credenciais inválidas');
       }
-    } catch {
-      setError('Ocorreu um erro durante o login');
+    } catch (err: any) { // Captura o erro propagado por performLogin
+      setError(err.message || 'Ocorreu um erro durante o login');
     } finally {
       setLoading(false);
     }

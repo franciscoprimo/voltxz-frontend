@@ -1,28 +1,34 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-interface SignUpData {
+export type UserType = "land_owner" | "company" | "investor" | "monitor";
+
+export interface SignUpData {
   email: string;
   password: string;
-  nome: string;
-  tipo: "proprietario" | "empresa" | "investidor" | "monitor";
+  name: string;
+  user_type: UserType;
+  phone?: string;
 }
 
-interface SignInData {
+export interface SignInData {
   email: string;
   password: string;
 }
 
-interface AuthResponse {
-  token: string;
+export interface AuthResponse {
+  access_token: string;
   user: {
+    id: string;
+    name: string;
     email: string;
-    role: "proprietario" | "empresa" | "investidor" | "monitor";
+    user_type: UserType;
+    phone?: string | null;
   };
 }
 
 export const authService = {
   async signup(data: SignUpData): Promise<AuthResponse> {
-    const response = await fetch(`${API_URL}/auth/signup`, {
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -30,7 +36,7 @@ export const authService = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Erro ao cadastrar");
+      throw new Error(errorData.message || "Erro ao cadastrar.");
     }
 
     const result: AuthResponse = await response.json();
@@ -38,7 +44,7 @@ export const authService = {
   },
 
   async signin(data: SignInData): Promise<AuthResponse> {
-    const response = await fetch(`${API_URL}/auth/signin`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -46,7 +52,7 @@ export const authService = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Erro ao fazer login");
+      throw new Error(errorData.message || "Credenciais inválidas.");
     }
 
     const result: AuthResponse = await response.json();
