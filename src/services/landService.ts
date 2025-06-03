@@ -1,4 +1,3 @@
-// src/services/landService.ts
 import { getAuthToken } from '@/lib/auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -82,7 +81,6 @@ export const landService = {
     return response.json();
   },
 
-  // Adicione outras funções como getLandById se necessário
   async getLandById(id: string): Promise<Land> {
     const token = getAuthToken();
     if (!token) {
@@ -99,6 +97,27 @@ export const landService = {
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Erro ao buscar detalhes do terreno.');
+    }
+
+    return response.json();
+  },
+
+  async getAllLands(): Promise<Land[]> {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('Usuário não autenticado. Por favor, faça login.');
+    }
+
+    const response = await fetch(`${API_URL}/api/lands`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Erro ao buscar terrenos.');
     }
 
     return response.json();
