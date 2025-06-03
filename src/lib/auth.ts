@@ -1,84 +1,94 @@
-export type Role = 'owner' | 'company' | 'investor' | 'monitor';
+// src/lib/auth.ts
 
+// Importa o serviço de autenticação e os tipos necessários dele
+import { authService } from '@/lib/api/authService';
+import type { UserType as AuthServiceUserType, SignUpData as AuthServiceSignUpData } from '@/lib/api/authService';
+
+
+// Tipos que o resto do seu aplicativo vai usar para o usuário logado
 export type User = {
-  id?: string;
+  id: string; // id é obrigatório se sempre vem do token ou db
   name: string;
   email: string;
-  role: Role;
+  user_type: AuthServiceUserType; // Usa o UserType do authService para consistência
+  phone?: string | null; // Permite null para consistência com o backend e AuthResponse
 };
 
+// --- Funções de Armazenamento/Recuperação de Sessão ---
 
 function storeSession(accessToken: string, user: User) {
   localStorage.setItem('token', accessToken);
   localStorage.setItem('currentUser', JSON.stringify(user));
 }
 
-
 export function logoutUser() {
   localStorage.removeItem('token');
   localStorage.removeItem('currentUser');
 }
 
-// pra recuperar o usuario do armazenamento local. podemos tirar depois!
 export function getCurrentUser(): User | null {
-  const user = localStorage.getItem('currentUser');
-  return user ? JSON.parse(user) : null;
+  try {
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user) : null;
+  } catch (e) {
+    console.error("Failed to parse user from localStorage:", e);
+    localStorage.removeItem('currentUser');
+    return null;
+  }
 }
 
-// Recupera token salvo. para uso em headers ou futuramente substituir por cookies
 export function getAuthToken(): string | null {
   return localStorage.getItem('token');
 }
 
+// --- Funções que utilizam o authService para login e registro ---
 
-export async function registerUser(user: {
-  name: string;
-  email: string;
-  password: string;
-  role: Role;
-}): Promise<{ success: boolean; message: string }> {
+export async function performLogin(email: string, password: string): Promise<{ success: boolean; user?: User; message?: string }> {
   try {
-    const res = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(user),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      return { success: false, message: data.message || 'Erro ao registrar usuário.' };
+    const response = await authService.signin({ email, password });
+    if (response.access_token && response.user) {
+      // Ajusta o tipo do user para o tipo local se houver diferença, caso contrário, usa direto
+      const userToStore: User = {
+        id: response.user.id,
+        name: response.user.name,
+        email: response.user.email,
+        user_type: response.user.user_type, // Corrigido para user_type
+        phone: response.user.phone,
+      };
+      storeSession(response.access_token, userToStore);
+      return { success: true, user: userToStore };
     }
-
-    return { success: true, message: 'Usuário registrado com sucesso.' };
-  } catch (error) {
-    return { success: false, message: 'Erro de rede ou servidor.' };
+    return { success: false, message: "Resposta de login incompleta." };
+  } catch (error: any) { // Use any para lidar com 'error.message'
+    console.error("Login failed:", error.message);
+    logoutUser();
+    return { success: false, message: error.message || 'Erro de rede ou servidor.' };
   }
 }
 
-
-export async function loginUser(
-  email: string,
-  password: string
-): Promise<{ success: boolean; user?: User; message?: string }> {
+// Adapta a função de registro para usar o `authService` e o tipo de retorno correto
+export async function performRegister(data: AuthServiceSignUpData): Promise<{ success: boolean; user?: User; message?: string }> {
   try {
-    const res = await fetch('/api/auth/signin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      return { success: false, message: data.message || 'Credenciais inválidas.' };
+    const response = await authService.signup(data);
+    // Como o backend agora retorna o usuário completo no registro,
+    // podemos logar o usuário automaticamente após o registro.
+    if (response.access_token && response.user) {
+      const userToStore: User = {
+        id: response.user.id,
+        name: response.user.name,
+        email: response.user.email,
+        user_type: response.user.user_type, // Corrigido para user_type
+        phone: response.user.phone,
+      };
+      storeSession(response.access_token, userToStore);
+      return { success: true, user: userToStore };
     }
-
-    // Armazenar localmente. vamos tirar quando for integrar com back. ta aqui só para testes
-    storeSession(data.access_token, data.user);
-
-    return { success: true, user: data.user };
-  } catch (error) {
-    return { success: false, message: 'Erro de rede ou servidor.' };
+    return { success: false, message: "Resposta de registro incompleta." };
+  } catch (error: any) { // Use any para lidar com 'error.message'
+    console.error("Registration failed:", error.message);
+    return { success: false, message: error.message || 'Erro de rede ou servidor.' };
   }
 }
+
+// Re-exporta UserType para ser usado por outros componentes que precisam saber os tipos de usuário
+export type { AuthServiceUserType as UserType };

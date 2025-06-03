@@ -1,8 +1,10 @@
+// pages/signup/index.tsx (ou o caminho correto)
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { registerUser } from '@/lib/auth';
+import { performRegister } from '@/lib/auth'; // Importa performRegister
+import type { UserType } from '@/lib/auth'; // Importa UserType
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -11,7 +13,8 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'owner' | 'company' | 'investor' | 'monitor'>('owner');
+  // Alinhado com o UserType do backend
+  const [user_type, setUser_type] = useState<UserType>('land_owner'); // <-- Renomeado de 'role' para 'user_type'
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -26,16 +29,19 @@ export default function SignupPage() {
     setError('');
 
     try {
-      const result = await registerUser({ name, email, password, role });
+      // Chama performRegister com os dados alinhados
+      const result = await performRegister({ name, email, password, user_type });
 
       if (result.success) {
-        // Redirecionar para a página de completar cadastro com o role
-        router.push(`/complete-registration?role=${role}`);
+        // Se o registro logar automaticamente, você pode ir para o dashboard
+        router.push(`/complete-registration?user_type=${user_type}`);
+        // Se a ideia for completar o cadastro antes de ir para o dashboard
+        // router.push(`/complete-registration?user_type=${user_type}`);
       } else {
         setError(result.message || 'Erro ao registrar');
       }
-    } catch {
-      setError('Ocorreu um erro durante o cadastro');
+    } catch (err: any) { // Pega o erro que foi propagado
+      setError(err.message || 'Ocorreu um erro durante o cadastro');
     } finally {
       setLoading(false);
     }
@@ -72,24 +78,25 @@ export default function SignupPage() {
           />
 
           <div className="flex justify-between mt-4">
-            {['owner', 'company', 'investor', 'monitor'].map((r) => (
+            {/* Atualizado para user_type e valores do backend */}
+            {['land_owner', 'company', 'investor', 'monitor'].map((type) => (
               <label
-                key={r}
+                key={type}
                 className="flex items-center space-x-2 cursor-pointer select-none text-yellow-700 hover:text-yellow-800 transition"
               >
                 <input
                   type="radio"
-                  value={r}
-                  checked={role === r}
-                  onChange={() => setRole(r as any)}
+                  value={type}
+                  checked={user_type === type}
+                  onChange={() => setUser_type(type as UserType)}
                   className="accent-yellow-500 focus:ring-yellow-500"
                 />
                 <span className="capitalize">
-                  {r === 'owner'
+                  {type === 'land_owner'
                     ? 'Proprietário'
-                    : r === 'company'
+                    : type === 'company'
                     ? 'Empresa'
-                    : r === 'investor'
+                    : type === 'investor'
                     ? 'Investidor'
                     : 'Monitor'}
                 </span>
