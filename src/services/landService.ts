@@ -121,5 +121,5 @@ export const landService = {
     }
 
     return response.json();
-  },
+  },  
 };

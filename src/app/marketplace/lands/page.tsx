@@ -1,20 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/marketplace/lands/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { landService, Land } from '@/services/landService';
 import { Button } from '@/components/ui/button';
 import { Input as ShadcnInput } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Search } from 'lucide-react';
 import {
   Dialog,
@@ -38,21 +27,30 @@ export default function MarketplaceLandsPage() {
 
   useEffect(() => {
     document.title = 'VoltzX | Marketplace';
-    fetchLands();
+    const fetch = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const allLands = await landService.getAllLands();
+        setLands(allLands.filter((l) => l.availability));
+      } catch (err: any) {
+        setError(err.message || 'Erro ao carregar terrenos.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
   }, []);
 
-  const fetchLands = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const allLands = await landService.getAllLands();
-      setLands(allLands.filter((l: Land) => l.availability));
-    } catch (err: any) {
-      setError(err.message || 'Erro ao carregar terrenos.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const filteredLands = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return lands.filter(
+      (land) =>
+        land.city.toLowerCase().includes(term) ||
+        land.state.toLowerCase().includes(term) ||
+        land.street.toLowerCase().includes(term)
+    );
+  }, [lands, searchTerm]);
 
   const handleViewDetails = async (landId: string) => {
     setLoadingDetails(true);
@@ -69,12 +67,6 @@ export default function MarketplaceLandsPage() {
     }
   };
 
-  const filteredLands = lands.filter((land) =>
-    land.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    land.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    land.street.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="min-h-screen bg-gray-100 py-6">
       <div className="container mx-auto px-4">
@@ -89,7 +81,7 @@ export default function MarketplaceLandsPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pr-10 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500"
             />
-            <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+            <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5 pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
           </div>
@@ -102,36 +94,34 @@ export default function MarketplaceLandsPage() {
         ) : filteredLands.length === 0 ? (
           <p>Nenhum terreno disponível encontrado.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableCaption>Terrenos disponíveis no marketplace.</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Rua</TableHead>
-                  <TableHead>Cidade</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLands.map((land) => (
-                  <TableRow key={land.id}>
-                    <TableCell>{land.id}</TableCell>
-                    <TableCell>{land.street}</TableCell>
-                    <TableCell>{land.city}</TableCell>
-                    <TableCell>{land.state}</TableCell>
-                    <TableCell>R$ {parseFloat(land.price).toFixed(2)}</TableCell>
-                    <TableCell className="text-right">
-                      <Button size="sm" onClick={() => handleViewDetails(land.id)}>
-                        Ver Detalhes
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredLands.map((land) => (
+              <div
+                key={land.id}
+                className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between"
+              >
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {land.street}, {land.number}
+                  </h3>
+                  <p>
+                    {land.city} - {land.state}
+                  </p>
+                  <p>CEP: {land.postal_code}</p>
+                  <p className="mt-2 font-bold text-yellow-700">
+                    R$ {Number(land.price).toFixed(2)}
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  className="mt-4 self-end"
+                  onClick={() => handleViewDetails(land.id)}
+                  disabled={loadingDetails}
+                >
+                  Ver Detalhes
+                </Button>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -141,9 +131,7 @@ export default function MarketplaceLandsPage() {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Detalhes do Terreno</DialogTitle>
-            <DialogDescription>
-              Informações sobre o terreno selecionado.
-            </DialogDescription>
+            <DialogDescription>Informações sobre o terreno selecionado.</DialogDescription>
           </DialogHeader>
           {loadingDetails ? (
             <p className="py-4 text-center">Carregando detalhes...</p>
@@ -181,7 +169,7 @@ export default function MarketplaceLandsPage() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <span className="font-semibold">Preço:</span>
-                <span>R$ {parseFloat(selectedLand.price).toFixed(2)}</span>
+                <span>R$ {Number(selectedLand.price).toFixed(2)}</span>
               </div>
             </div>
           ) : (
